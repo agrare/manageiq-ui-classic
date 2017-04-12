@@ -397,7 +397,7 @@ module OpsController::Settings::Common
       @edit[:new].set_worker_setting!(:MiqEventCatcher, :memory_threshold, human_size_to_rails_method(w[:memory_threshold]))
 
       w = wb[:vim_broker_worker]
-      @edit[:new].set_worker_setting!(:MiqVimBrokerWorker, :memory_threshold, human_size_to_rails_method(w[:memory_threshold]))
+      @edit[:new].set_worker_setting!('ManageIQ::Providers::Vmware::InfraManager::VimBrokerWorker', :memory_threshold, human_size_to_rails_method(w[:memory_threshold]))
 
       w = qwb[:smart_proxy_worker]
       @edit[:new].set_worker_setting!(:MiqSmartProxyWorker, :count, w[:count].to_i)
@@ -1009,7 +1009,7 @@ module OpsController::Settings::Common
       (3.gigabytes..10.gigabytes).step(512.megabytes) { |x| @sb[:event_catcher_threshold] << number_to_human_size(x, :significant => false) }
 
       w = (wb[:vim_broker_worker] ||= {})
-      w[:memory_threshold] = rails_method_to_human_size(@edit[:current].get_raw_worker_setting(:MiqVimBrokerWorker, :memory_threshold)) || rails_method_to_human_size(1.gigabytes)
+      w[:memory_threshold] = rails_method_to_human_size(@edit[:current].get_raw_worker_setting('ManageIQ::Providers::Vmware::InfraManager::VimBrokerWorker', :memory_threshold)) || rails_method_to_human_size(1.gigabytes)
       @sb[:vim_broker_threshold] = []
       (500.megabytes..900.megabytes).step(100.megabytes) { |x| @sb[:vim_broker_threshold] << number_to_human_size(x, :significant => false) }
       (1.gigabytes..2.9.gigabytes).step(1.gigabyte / 10) { |x| @sb[:vim_broker_threshold] << number_to_human_size(x, :significant => false) }
