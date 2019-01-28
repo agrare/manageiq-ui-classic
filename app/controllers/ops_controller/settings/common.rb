@@ -1015,9 +1015,8 @@ module OpsController::Settings::Common
     qwb[:ems_metrics_collector_worker] ||= {}
     qwb[:ems_metrics_collector_worker][:defaults] ||= {}
     w = qwb[:ems_metrics_collector_worker][:defaults]
-    raw = get_worker_setting(@edit[:current], MiqEmsMetricsCollectorWorker)
-    w[:count] = raw[:defaults][:count] || 2
-    w[:memory_threshold] = raw[:defaults][:memory_threshold] || 400.megabytes
+    w[:count] = get_worker_setting(@edit[:current], MiqEmsMetricsCollectorWorker, :count) || 2
+    w[:memory_threshold] = get_worker_setting(@edit[:current], MiqEmsMetricsCollectorWorker, :memory_threshold) || 400.megabytes
     @sb[:ems_metrics_collector_threshold] = []
     @sb[:ems_metrics_collector_threshold] = copy_array(@sb[:threshold])
 
