@@ -417,7 +417,7 @@ module OpsController::Settings::Common
       set_worker_setting(@edit[:new], MiqEmsMetricsProcessorWorker, :memory_threshold, w[:memory_threshold])
 
       w = qwb[:ems_refresh_worker][:defaults]
-      set_worker_setting(@edit[:new], MiqEmsRefreshWorker, :defaults, :memory_threshold, w[:memory_threshold])
+      set_worker_setting(@edit[:new], MiqEmsRefreshWorker, :defaults, :memory_threshold, human_size_to_rails_method(number_to_human_size(w[:memory_threshold])))
 
       wb = @edit[:new][:workers][:worker_base]
       w = wb[:event_catcher]
@@ -1037,10 +1037,10 @@ module OpsController::Settings::Common
     w = qwb[:ems_refresh_worker][:defaults]
     w[:memory_threshold] = get_worker_setting(@edit[:current], MiqEmsRefreshWorker, :defaults, :memory_threshold) || 400.megabytes
     @sb[:ems_refresh_threshold] = []
-    (200.megabytes...550.megabytes).step(50.megabytes) { |x| @sb[:ems_refresh_threshold] << [number_to_human_size(x, :significant => false), x] }
-    (600.megabytes..900.megabytes).step(100.megabytes) { |x| @sb[:ems_refresh_threshold] << [number_to_human_size(x, :significant => false), x] }
-    (1.gigabytes..2.9.gigabytes).step(1.gigabyte / 10) { |x| @sb[:ems_refresh_threshold] << [number_to_human_size(x, :significant => false), x] }
-    (3.gigabytes..10.gigabytes).step(512.megabytes) { |x| @sb[:ems_refresh_threshold] << [number_to_human_size(x, :significant => false), x] }
+    (200..550).step(50).map(&:megabytes).each { |x| @sb[:ems_refresh_threshold] << [number_to_human_size(x, :significant => false), x] }
+    (600..900).step(100).map(&:megabytes).each { |x| @sb[:ems_refresh_threshold] << [number_to_human_size(x, :significant => false), x] }
+    (1..2.9).step(0.1).map(&:gigabytes).each { |x| @sb[:ems_refresh_threshold] << [number_to_human_size(x, :significant => false), x] }
+    (3..10).step(0.5).map(&:gigabytes).each { |x| @sb[:ems_refresh_threshold] << [number_to_human_size(x, :significant => false), x] }
 
     wb = @edit[:current][:workers][:worker_base]
     w = (wb[:event_catcher] ||= {})
